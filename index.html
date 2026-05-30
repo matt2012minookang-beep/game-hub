@@ -15,12 +15,23 @@
       --muted: #aeb8d6;
       --accent: #73d4ff;
       --accent2: #8d7bff;
+      --gold: #ffd76a;
+      --gold2: #ffb02e;
       --danger: #ff6680;
       --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    a, button, input {
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -35,9 +46,9 @@
     }
 
     .wrap {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1180px, calc(100% - clamp(20px, 4vw, 40px)));
       margin: 0 auto;
-      padding: 34px 0 48px;
+      padding: clamp(22px, 4vw, 34px) 0 clamp(34px, 6vw, 48px);
     }
 
     header {
@@ -58,17 +69,18 @@
     .title-area p {
       margin: 12px 0 0;
       color: var(--muted);
-      font-size: 16px;
+      font-size: clamp(14px, 2.5vw, 16px);
       line-height: 1.55;
     }
 
     .badge {
       flex: 0 0 auto;
-      padding: 12px 16px;
+      padding: clamp(9px, 2.5vw, 12px) clamp(12px, 3vw, 16px);
       border: 1px solid var(--line);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       color: var(--accent);
+      font-size: clamp(13px, 2.7vw, 16px);
       font-weight: 800;
       box-shadow: var(--shadow);
     }
@@ -87,8 +99,8 @@
       color: var(--text);
       background: rgba(255, 255, 255, 0.08);
       border-radius: 18px;
-      padding: 15px 17px;
-      font-size: 16px;
+      padding: clamp(13px, 3vw, 15px) clamp(14px, 3.2vw, 17px);
+      font-size: clamp(14px, 3.2vw, 16px);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     }
 
@@ -110,17 +122,72 @@
       white-space: nowrap;
     }
 
+    .category-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 26px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.075);
+      color: var(--text);
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tab:hover {
+      transform: translateY(-2px);
+      border-color: rgba(115, 212, 255, 0.5);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(115, 212, 255, 0.22), rgba(141, 123, 255, 0.2));
+      border-color: rgba(115, 212, 255, 0.65);
+      color: #ffffff;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 28px 0 14px;
+      font-size: 21px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title:first-of-type {
+      margin-top: 8px;
+    }
+
+    .section-title .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(115, 212, 255, 0.75);
+    }
+
+    .section-title.recommend .dot {
+      background: var(--gold);
+      box-shadow: 0 0 18px rgba(255, 215, 106, 0.9);
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(min(245px, 100%), 1fr));
       gap: 16px;
     }
 
     .card {
       position: relative;
       overflow: hidden;
-      min-height: 210px;
-      padding: 18px;
+      min-height: clamp(205px, 26vw, 232px);
+      padding: clamp(15px, 3vw, 18px);
       border: 1px solid var(--line);
       border-radius: 26px;
       background: linear-gradient(150deg, var(--card), rgba(255, 255, 255, 0.045));
@@ -136,6 +203,25 @@
       background: linear-gradient(150deg, var(--card2), rgba(255, 255, 255, 0.07));
     }
 
+    .card.recommended {
+      border: 2px solid rgba(255, 215, 106, 0.98);
+      background:
+        linear-gradient(150deg, rgba(255, 215, 106, 0.13), rgba(255, 255, 255, 0.06)),
+        linear-gradient(150deg, var(--card), rgba(255, 255, 255, 0.045));
+      box-shadow:
+        0 0 0 1px rgba(255, 176, 46, 0.35),
+        0 0 28px rgba(255, 215, 106, 0.18),
+        var(--shadow);
+    }
+
+    .card.recommended:hover {
+      border-color: #ffe69b;
+      box-shadow:
+        0 0 0 1px rgba(255, 176, 46, 0.6),
+        0 0 36px rgba(255, 215, 106, 0.28),
+        var(--shadow);
+    }
+
     .card::before {
       content: "";
       position: absolute;
@@ -147,29 +233,73 @@
       filter: blur(4px);
     }
 
+    .card.recommended::before {
+      background: rgba(255, 215, 106, 0.26);
+    }
+
+    .tag-row {
+      position: relative;
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      min-height: 27px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .tag.recommend {
+      color: #2c2100;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .tag.pc {
+      background: rgba(255, 102, 128, 0.18);
+      border-color: rgba(255, 102, 128, 0.5);
+      color: #ffd7de;
+    }
+
+    .tag.category {
+      color: #dff5ff;
+      background: rgba(115, 212, 255, 0.14);
+      border-color: rgba(115, 212, 255, 0.36);
+    }
+
     .icon {
       position: relative;
-      width: 58px;
-      height: 58px;
+      width: clamp(48px, 12vw, 58px);
+      height: clamp(48px, 12vw, 58px);
       display: grid;
       place-items: center;
       border-radius: 18px;
       background: rgba(255, 255, 255, 0.14);
-      font-size: 30px;
-      margin-bottom: 18px;
+      font-size: clamp(25px, 7vw, 30px);
+      margin-bottom: 14px;
     }
 
     .card h2 {
       position: relative;
       margin: 0 0 8px;
-      font-size: 20px;
+      font-size: clamp(18px, 4.5vw, 20px);
       letter-spacing: -0.5px;
     }
 
     .repo {
       position: relative;
       color: var(--accent);
-      font-size: 13px;
+      font-size: clamp(12px, 3.2vw, 13px);
       font-weight: 800;
       margin-bottom: 12px;
       word-break: break-word;
@@ -180,7 +310,8 @@
       margin: 0;
       color: var(--muted);
       line-height: 1.48;
-      font-size: 14px;
+      font-size: clamp(13px, 3.3vw, 14px);
+      padding-bottom: 36px;
     }
 
     .open {
@@ -220,9 +351,15 @@
       text-align: center;
     }
 
-    @media (max-width: 980px) {
+    @media (min-width: 1024px) {
       .grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
       }
     }
 
@@ -240,27 +377,50 @@
         min-height: 50px;
       }
 
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
+      .category-tabs {
+        gap: 8px;
+      }
+
+      .tab {
+        flex: 1 1 calc(50% - 8px);
+        padding: 11px 10px;
       }
 
       .card {
-        min-height: 220px;
+        min-height: 218px;
       }
     }
 
-    @media (max-width: 460px) {
-      .wrap {
-        width: min(100% - 22px, 1180px);
-        padding-top: 24px;
-      }
-
+    @media (max-width: 520px) {
       .grid {
         grid-template-columns: 1fr;
       }
 
+      .section-title {
+        font-size: 19px;
+      }
+
       .card {
-        min-height: 200px;
+        min-height: auto;
+      }
+
+      .desc {
+        padding-bottom: 42px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .wrap {
+        width: min(100% - 18px, 1180px);
+      }
+
+      .title-area h1 {
+        letter-spacing: -1.2px;
+      }
+
+      .tag {
+        font-size: 11px;
+        padding: 4px 8px;
       }
     }
   </style>
@@ -280,16 +440,38 @@
       <a class="home-link" href="https://github.com/matt2012minookang-beep" target="_blank" rel="noopener noreferrer">GitHub 보기</a>
     </section>
 
-    <section id="gameGrid" class="grid">
-      <a class="card" href="https://matt2012minookang-beep.github.io/chatgpt-novel/" target="_blank" rel="noopener noreferrer" data-keywords="chatgpt-novel 웹소설 웹툰 소설 뷰어 코인 이용권 검색 프로필">
+    <section class="category-tabs">
+      <button class="tab active" type="button" data-filter="all">전체</button>
+      <button class="tab" type="button" data-filter="게임">게임</button>
+      <button class="tab" type="button" data-filter="학습">학습</button>
+      <button class="tab" type="button" data-filter="놀이">놀이</button>
+    </section>
+
+    <h2 class="section-title recommend" data-section="추천">
+      <span class="dot"></span>
+      추천 게임
+    </h2>
+    <section id="recommendedGrid" class="grid">
+      <a class="card recommended" href="https://matt2012minookang-beep.github.io/chatgpt-novel/" target="_blank" rel="noopener noreferrer" data-category="놀이" data-keywords="chatgpt-novel 웹소설 웹툰 소설 뷰어 코인 이용권 검색 프로필 추천">
+        <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">놀이</span></div>
         <div class="icon">📖</div>
-        <h2>웹소설 뷰어</h2>
+        <h2>챗 웹</h2>
         <div class="repo">chatgpt-novel</div>
         <p class="desc">작품 목록, 회차 보기, 검색, 프로필, 코인/이용권 기능을 넣은 소설 플랫폼.</p>
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/acorn-game/" target="_blank" rel="noopener noreferrer" data-keywords="acorn-game 도토리 클릭커 다람쥐 청솔모 황금 도토리 강화 저장">
+      <a class="card recommended" href="https://matt2012minookang-beep.github.io/shooting-game/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="shooting-game 비행기 슈팅 보스 스테이지 웨이브 골드 강화 추천">
+        <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">게임</span></div>
+        <div class="icon">✈️</div>
+        <h2>비행기 게임</h2>
+        <div class="repo">shooting-game</div>
+        <p class="desc">비행기를 조종해 적과 보스를 상대하는 스테이지형 슈팅 게임.</p>
+        <div class="open">열기 <span>새 창 이동 →</span></div>
+      </a>
+
+      <a class="card recommended" href="https://matt2012minookang-beep.github.io/acorn-game/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="acorn-game 도토리 클릭커 다람쥐 청솔모 황금 도토리 강화 저장 추천">
+        <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">게임</span></div>
         <div class="icon">🌰</div>
         <h2>도토리 게임</h2>
         <div class="repo">acorn-game</div>
@@ -297,7 +479,23 @@
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/pinball/" target="_blank" rel="noopener noreferrer" data-keywords="pinball 핀볼 공 점수 물리 튕김">
+      <a class="card recommended" href="https://matt2012minookang-beep.github.io/cardaction-game/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="cardaction-game 카드 액션 배틀 카드팩 유물 전설 신화 영역전개 추천">
+        <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">게임</span></div>
+        <div class="icon">🃏</div>
+        <h2>카드액션 게임</h2>
+        <div class="repo">cardaction-game</div>
+        <p class="desc">카드와 유물, 상점, 등급 카드로 전투하는 카드 액션 게임.</p>
+        <div class="open">열기 <span>새 창 이동 →</span></div>
+      </a>
+    </section>
+
+    <h2 class="section-title" data-section="게임">
+      <span class="dot"></span>
+      게임
+    </h2>
+    <section class="grid category-grid" data-grid-category="게임">
+      <a class="card" href="https://matt2012minookang-beep.github.io/pinball/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="pinball 핀볼 공 점수 물리 튕김 게임">
+        <div class="tag-row"><span class="tag category">게임</span></div>
         <div class="icon">🟣</div>
         <h2>핀볼</h2>
         <div class="repo">pinball</div>
@@ -305,23 +503,8 @@
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/shooting-game/" target="_blank" rel="noopener noreferrer" data-keywords="shooting-game 비행기 슈팅 보스 스테이지 웨이브 골드 강화">
-        <div class="icon">✈️</div>
-        <h2>비행기 슈팅</h2>
-        <div class="repo">shooting-game</div>
-        <p class="desc">비행기를 조종해 적과 보스를 상대하는 스테이지형 슈팅 게임.</p>
-        <div class="open">열기 <span>새 창 이동 →</span></div>
-      </a>
-
-      <a class="card" href="https://matt2012minookang-beep.github.io/math/" target="_blank" rel="noopener noreferrer" data-keywords="math 수학 방정식 계산기 부등식 루트 로그 삼각함수">
-        <div class="icon">🧮</div>
-        <h2>수학 계산 사이트</h2>
-        <div class="repo">math</div>
-        <p class="desc">방정식, 부등식, 루트, 제곱, 로그, 삼각함수 계산을 목표로 한 수학 도구.</p>
-        <div class="open">열기 <span>새 창 이동 →</span></div>
-      </a>
-
-      <a class="card" href="https://matt2012minookang-beep.github.io/hist-keeper/" target="_blank" rel="noopener noreferrer" data-keywords="hist-keeper 금고 지키기 1대1 전쟁 방어 병력 강화 업그레이드">
+      <a class="card" href="https://matt2012minookang-beep.github.io/hist-keeper/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="hist-keeper 금고 지키기 1대1 전쟁 방어 병력 강화 업그레이드 게임">
+        <div class="tag-row"><span class="tag category">게임</span></div>
         <div class="icon">🏦</div>
         <h2>금고 지키기</h2>
         <div class="repo">hist-keeper</div>
@@ -329,39 +512,56 @@
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/cardaction-game/" target="_blank" rel="noopener noreferrer" data-keywords="cardaction-game 카드 액션 배틀 카드팩 유물 전설 신화 영역전개">
-        <div class="icon">🃏</div>
-        <h2>카드 액션 배틀</h2>
-        <div class="repo">cardaction-game</div>
-        <p class="desc">카드와 유물, 상점, 등급 카드로 전투하는 카드 액션 게임.</p>
-        <div class="open">열기 <span>새 창 이동 →</span></div>
-      </a>
-
-      <a class="card" href="https://matt2012minookang-beep.github.io/attack-game/" target="_blank" rel="noopener noreferrer" data-keywords="attack-game 적을 멸망시켜라 냥코 라인전 농부 기사 궁수 창병">
+      <a class="card" href="https://matt2012minookang-beep.github.io/attack-game/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="attack-game 적을 멸망시켜라 냥코 라인전 농부 기사 궁수 창병 컴퓨터 필수 게임">
+        <div class="tag-row"><span class="tag category">게임</span><span class="tag pc">컴퓨터 필수</span></div>
         <div class="icon">⚔️</div>
         <h2>적을 멸망시켜라!</h2>
         <div class="repo">attack-game</div>
-        <p class="desc">유닛을 소환해 라인을 밀고 적 기지를 파괴하는 라인전 게임.</p>
+        <p class="desc">유닛을 소환해 라인을 밀고 적 기지를 파괴하는 라인전 게임. 컴퓨터 플레이를 권장합니다.</p>
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/element/" target="_blank" rel="noopener noreferrer" data-keywords="element 주기율표 원소 암기 퀴즈 원자번호 원자량 기호">
-        <div class="icon">🧪</div>
-        <h2>주기율표 암기</h2>
-        <div class="repo">element</div>
-        <p class="desc">원소 이름, 기호, 원자번호, 원자량 등을 외우는 학습형 퀴즈 사이트.</p>
-        <div class="open">열기 <span>새 창 이동 →</span></div>
-      </a>
-
-      <a class="card" href="https://matt2012minookang-beep.github.io/stock-game/" target="_blank" rel="noopener noreferrer" data-keywords="stock-game 주식 투자 매수 매도 자산 시뮬레이션">
+      <a class="card" href="https://matt2012minookang-beep.github.io/stock-game/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="stock-game 주식 투자 매수 매도 자산 시뮬레이션 게임">
+        <div class="tag-row"><span class="tag category">게임</span></div>
         <div class="icon">📈</div>
         <h2>주식 게임</h2>
         <div class="repo">stock-game</div>
         <p class="desc">주식을 사고팔며 자산을 늘리는 투자 시뮬레이션 게임.</p>
         <div class="open">열기 <span>새 창 이동 →</span></div>
       </a>
+    </section>
 
-      <a class="card" href="https://matt2012minookang-beep.github.io/chess-game/" target="_blank" rel="noopener noreferrer" data-keywords="chess-game 체스 말 이동 턴 보드 전략">
+    <h2 class="section-title" data-section="학습">
+      <span class="dot"></span>
+      학습
+    </h2>
+    <section class="grid category-grid" data-grid-category="학습">
+      <a class="card" href="https://matt2012minookang-beep.github.io/math/" target="_blank" rel="noopener noreferrer" data-category="학습" data-keywords="math 수학 방정식 계산기 부등식 루트 로그 삼각함수 학습">
+        <div class="tag-row"><span class="tag category">학습</span></div>
+        <div class="icon">🧮</div>
+        <h2>방정식 계산기</h2>
+        <div class="repo">math</div>
+        <p class="desc">방정식, 부등식, 루트, 제곱, 로그, 삼각함수 계산을 목표로 한 수학 도구.</p>
+        <div class="open">열기 <span>새 창 이동 →</span></div>
+      </a>
+
+      <a class="card" href="https://matt2012minookang-beep.github.io/element/" target="_blank" rel="noopener noreferrer" data-category="학습" data-keywords="element 주기율표 원소 암기 퀴즈 원자번호 원자량 기호 학습">
+        <div class="tag-row"><span class="tag category">학습</span></div>
+        <div class="icon">🧪</div>
+        <h2>주기율표 암기</h2>
+        <div class="repo">element</div>
+        <p class="desc">원소 이름, 기호, 원자번호, 원자량 등을 외우는 학습형 퀴즈 사이트.</p>
+        <div class="open">열기 <span>새 창 이동 →</span></div>
+      </a>
+    </section>
+
+    <h2 class="section-title" data-section="놀이">
+      <span class="dot"></span>
+      놀이
+    </h2>
+    <section class="grid category-grid" data-grid-category="놀이">
+      <a class="card" href="https://matt2012minookang-beep.github.io/chess-game/" target="_blank" rel="noopener noreferrer" data-category="놀이" data-keywords="chess-game 체스 말 이동 턴 보드 전략 놀이">
+        <div class="tag-row"><span class="tag category">놀이</span></div>
         <div class="icon">♟️</div>
         <h2>체스 게임</h2>
         <div class="repo">chess-game</div>
@@ -379,22 +579,122 @@
 
   <script>
     const searchInput = document.getElementById("searchInput");
+    const tabs = Array.from(document.querySelectorAll(".tab"));
     const cards = Array.from(document.querySelectorAll(".card"));
+    const sectionTitles = Array.from(document.querySelectorAll(".section-title"));
+    const grids = Array.from(document.querySelectorAll(".grid"));
     const empty = document.getElementById("empty");
 
-    searchInput.addEventListener("input", () => {
+    const recommendedGrid = document.getElementById("recommendedGrid");
+    const gameGrid = document.querySelector('[data-grid-category="게임"]');
+    const learningGrid = document.querySelector('[data-grid-category="학습"]');
+    const playGrid = document.querySelector('[data-grid-category="놀이"]');
+
+    const allOrder = [
+      "chatgpt-novel",
+      "shooting-game",
+      "acorn-game",
+      "cardaction-game",
+      "pinball",
+      "hist-keeper",
+      "attack-game",
+      "stock-game",
+      "math",
+      "element",
+      "chess-game"
+    ];
+
+    let currentFilter = "all";
+
+    function repoName(card) {
+      const repo = card.querySelector(".repo");
+      return repo ? repo.textContent.trim() : "";
+    }
+
+    function restoreSectionLayout() {
+      cards.forEach(card => {
+        if (card.classList.contains("recommended")) {
+          recommendedGrid.appendChild(card);
+        } else if (card.dataset.category === "게임") {
+          gameGrid.appendChild(card);
+        } else if (card.dataset.category === "학습") {
+          learningGrid.appendChild(card);
+        } else if (card.dataset.category === "놀이") {
+          playGrid.appendChild(card);
+        }
+      });
+    }
+
+    function makeAllLayout() {
+      restoreSectionLayout();
+
+      const orderedCards = [...cards].sort((a, b) => {
+        return allOrder.indexOf(repoName(a)) - allOrder.indexOf(repoName(b));
+      });
+
+      orderedCards.forEach(card => recommendedGrid.appendChild(card));
+    }
+
+    function applyFilter() {
       const q = searchInput.value.trim().toLowerCase();
       let visibleCount = 0;
 
-      cards.forEach(card => {
-        const text = card.innerText.toLowerCase() + " " + card.dataset.keywords.toLowerCase();
-        const matched = text.includes(q);
-        card.style.display = matched ? "" : "none";
-        if (matched) visibleCount += 1;
-      });
+      if (currentFilter === "all") {
+        makeAllLayout();
+
+        recommendedGrid.style.display = "grid";
+        gameGrid.style.display = "none";
+        learningGrid.style.display = "none";
+        playGrid.style.display = "none";
+
+        sectionTitles.forEach(title => {
+          title.style.display = title.dataset.section === "추천" ? "none" : "none";
+        });
+
+        cards.forEach(card => {
+          const text = (card.innerText + " " + card.dataset.keywords).toLowerCase();
+          const visible = text.includes(q);
+          card.style.display = visible ? "" : "none";
+          if (visible) visibleCount += 1;
+        });
+      } else {
+        restoreSectionLayout();
+
+        cards.forEach(card => {
+          const text = (card.innerText + " " + card.dataset.keywords).toLowerCase();
+          const matchesSearch = text.includes(q);
+          const matchesCategory = card.dataset.category === currentFilter;
+          const visible = matchesSearch && matchesCategory;
+
+          card.style.display = visible ? "" : "none";
+          if (visible) visibleCount += 1;
+        });
+
+        grids.forEach(grid => {
+          const visibleCards = Array.from(grid.querySelectorAll(".card")).filter(card => card.style.display !== "none");
+          grid.style.display = visibleCards.length > 0 ? "grid" : "none";
+        });
+
+        sectionTitles.forEach(title => {
+          const nextGrid = title.nextElementSibling;
+          title.style.display = nextGrid && nextGrid.style.display !== "none" ? "flex" : "none";
+        });
+      }
 
       empty.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        currentFilter = tab.dataset.filter;
+        applyFilter();
+      });
     });
+
+    searchInput.addEventListener("input", applyFilter);
+    applyFilter();
   </script>
 </body>
 </html>
