@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>고쓰비 게임 허브</title>
+  <title>게임 허브</title>
   <style>
     :root {
       --bg1: #10131f;
@@ -393,46 +393,126 @@
 
     @media (max-width: 520px) {
       .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
       }
 
       .section-title {
-        font-size: 19px;
+        font-size: 18px;
       }
 
       .card {
-        min-height: auto;
+        min-height: 188px;
+        border-radius: 20px;
+        padding: 12px;
+      }
+
+      .tag-row {
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+
+      .tag {
+        font-size: 10px;
+        padding: 3px 6px;
+      }
+
+      .icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        font-size: 23px;
+        margin-bottom: 10px;
+      }
+
+      .card h2 {
+        font-size: 15px;
+        margin-bottom: 5px;
+      }
+
+      .repo {
+        font-size: 10px;
+        margin-bottom: 7px;
       }
 
       .desc {
-        padding-bottom: 42px;
+        font-size: 11px;
+        line-height: 1.35;
+        padding-bottom: 34px;
+      }
+
+      .open {
+        left: 12px;
+        right: 12px;
+        bottom: 11px;
+        font-size: 12px;
+      }
+
+      .open span {
+        font-size: 10px;
       }
     }
 
     @media (max-width: 380px) {
       .wrap {
-        width: min(100% - 18px, 1180px);
+        width: min(100% - 14px, 1180px);
       }
 
       .title-area h1 {
         letter-spacing: -1.2px;
       }
 
+      .grid {
+        gap: 8px;
+      }
+
+      .card {
+        min-height: 176px;
+        padding: 10px;
+        border-radius: 18px;
+      }
+
       .tag {
+        font-size: 9px;
+        padding: 3px 5px;
+      }
+
+      .icon {
+        width: 38px;
+        height: 38px;
+        font-size: 21px;
+      }
+
+      .card h2 {
+        font-size: 14px;
+      }
+
+      .desc {
+        font-size: 10.5px;
+      }
+
+      .open {
+        left: 10px;
+        right: 10px;
         font-size: 11px;
-        padding: 4px 8px;
       }
     }
-  </style>
+      /* mobile 2-column override */
+    @media (max-width: 520px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+    }
+</style>
 </head>
 <body>
   <main class="wrap">
     <header>
       <div class="title-area">
-        <h1>고쓰비 게임 허브</h1>
+        <h1>게임 허브</h1>
         <p>내가 만든 게임과 사이트를 한곳에 모아둔 런처입니다. 카드를 누르면 해당 사이트로 이동합니다.</p>
       </div>
-      <div class="badge">11개 사이트</div>
+      <div class="badge">12개 사이트</div>
     </header>
 
     <section class="toolbar">
@@ -452,6 +532,16 @@
       추천 게임
     </h2>
     <section id="recommendedGrid" class="grid">
+      <a class="card recommended" href="https://matt2012minookang-beep.github.io/tower-defence/" target="_blank" rel="noopener noreferrer" data-category="게임" data-keywords="tower-defence 타워디펜스 타워 디펜스 방어 웨이브 화살탑 목검 추천 게임">
+        <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">게임</span></div>
+        <div class="icon">🏰</div>
+        <h2>타워디펜스</h2>
+        <div class="repo">tower-defence</div>
+        <p class="desc">화살탑을 설치하고 목검으로 적을 막는 웨이브형 타워디펜스 게임.</p>
+        <div class="open">열기 <span>새 창 이동 →</span></div>
+      </a>
+
+
       <a class="card recommended" href="https://matt2012minookang-beep.github.io/chatgpt-novel/" target="_blank" rel="noopener noreferrer" data-category="놀이" data-keywords="chatgpt-novel 웹소설 웹툰 소설 뷰어 코인 이용권 검색 프로필 추천">
         <div class="tag-row"><span class="tag recommend">추천</span><span class="tag category">놀이</span></div>
         <div class="icon">📖</div>
@@ -591,6 +681,7 @@
     const playGrid = document.querySelector('[data-grid-category="놀이"]');
 
     const allOrder = [
+      "tower-defence",
       "chatgpt-novel",
       "shooting-game",
       "acorn-game",
