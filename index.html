@@ -520,6 +520,39 @@
     .tab.server-tab { border-color: rgba(185,117,255,.65); color: #e6caff; }
     .tab.server-tab.active { background: rgba(145,70,240,.33); border-color: #bb88ff; color: white; }
 
+
+/* 온라인 허브 계정/통계 UI (기존 카드 레이아웃은 건드리지 않음) */
+.hub-panel{margin:0 0 20px;padding:16px;border-radius:20px;border:1px solid rgba(115,212,255,.27);background:rgba(6,13,31,.42)}
+.hub-panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hub-panel-title h2{margin:0;font-size:19px}
+.hub-small{color:var(--muted);font-size:13px;line-height:1.5}
+.hub-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hub-btn{border:1px solid rgba(115,212,255,.43);background:rgba(115,212,255,.13);color:white;border-radius:11px;padding:9px 13px;cursor:pointer;font-weight:800}
+.hub-btn.primary{background:linear-gradient(120deg,#6e63dc,#36abd2);border:0}
+.hub-btn:disabled{opacity:.55;cursor:default}
+.hub-config{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.hub-config input,.hub-dialog input{background:#171d36;border:1px solid rgba(255,255,255,.24);border-radius:10px;color:white;padding:10px 12px;min-width:0}
+.hub-config input{flex:1 1 230px}
+.hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:13px 0 0}
+.hub-sub{border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.045);padding:12px;min-width:0}
+.hub-sub h3{font-size:15px;margin:0 0 8px}
+.hub-sub ol{margin:0;padding-left:21px;font-size:13px;line-height:1.8}
+.hub-sub li{overflow-wrap:anywhere}
+.hub-table-wrap{overflow-x:auto;max-height:350px;overflow-y:auto}
+.hub-table{border-collapse:collapse;width:100%;font-size:12px}
+.hub-table th,.hub-table td{padding:9px 7px;border-bottom:1px solid rgba(255,255,255,.14);text-align:left}
+.hub-table th{color:#c9d5f7}
+.hub-dialog{border:1px solid rgba(115,212,255,.38);background:#111a30;color:white;border-radius:22px;padding:22px;width:min(410px,calc(100vw - 24px));box-shadow:0 25px 75px #0008}
+.hub-dialog::backdrop{background:#030514bd}
+.hub-dialog h2{margin:0 0 14px}
+.hub-dialog label{display:block;margin:10px 0 5px;font-size:13px}
+.hub-dialog input{width:100%}
+.hub-dialog menu{display:flex;gap:8px;justify-content:flex-end;padding:0;margin:16px 0 0}
+.hub-user{border-radius:12px;padding:9px;margin:8px 0;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06)}
+.hub-user summary{cursor:pointer;font-weight:800}
+.hub-off{color:#ffc48f}
+@media(max-width:520px){.hub-grid{grid-template-columns:1fr}.hub-panel{padding:12px}.hub-panel-title h2{font-size:16px}.hub-btn{font-size:12px;padding:8px 10px}}
+
 </style>
 </head>
 <body>
@@ -531,6 +564,41 @@
       </div>
       <div class="badge">15개 사이트</div>
     </header>
+
+
+    <section class="hub-panel" aria-label="게임 허브 온라인 기록">
+      <div class="hub-panel-title">
+        <h2>👤 게임 허브 계정 · 방문 기록</h2>
+        <div class="hub-actions">
+          <span id="hubAccountName" class="hub-small">비로그인 상태</span>
+          <button type="button" class="hub-btn primary" id="hubLoginBtn">로그인 / 가입</button>
+          <button type="button" class="hub-btn" id="hubLogoutBtn" hidden>로그아웃</button>
+          <button type="button" class="hub-btn" id="hubAdminBtn" hidden>관리자 현황</button>
+        </div>
+      </div>
+      <p class="hub-small">로그인하지 않아도 모든 게임을 이용할 수 있어요. 로그인하면 방문한 사이트와 자주 클릭한 사이트가 이 계정에 저장됩니다. 사이트 클릭 수는 게임 허브에서 누른 횟수입니다.</p>
+      <details id="hubServerDetails">
+        <summary class="hub-small" style="cursor:pointer">⚙ 서버 연결 주소 설정</summary>
+        <div class="hub-config">
+          <input id="hubServerUrl" type="url" placeholder="https://내-파이썬-서버-공개주소 (HTTPS)" aria-label="게임 허브 서버 주소">
+          <button class="hub-btn" type="button" id="hubSaveServerBtn">주소 저장 / 연결</button>
+        </div>
+      </details>
+      <p id="hubServerStatus" class="hub-small hub-off" role="status">서버 주소를 입력하면 클릭 기록이 활성화됩니다.</p>
+      <div id="hubProfile" class="hub-grid" hidden>
+        <div class="hub-sub"><h3>🕘 최근 방문 사이트</h3><ol id="hubRecentList"></ol></div>
+        <div class="hub-sub"><h3>💜 자주 방문한 사이트</h3><ol id="hubFavList"></ol></div>
+      </div>
+      <details style="margin-top:12px">
+        <summary class="hub-small" style="cursor:pointer">📊 사이트별 전체 / 오늘 클릭 수</summary>
+        <div class="hub-table-wrap"><table class="hub-table"><thead><tr><th>사이트</th><th>전체 클릭</th><th>오늘 클릭</th></tr></thead><tbody id="hubStatsBody"><tr><td colspan="3">서버 연결 후 표시</td></tr></tbody></table></div>
+      </details>
+      <section id="hubAdminPanel" hidden>
+        <h3>🔐 관리자 · 로그인한 사용자 및 방문 현황</h3>
+        <p class="hub-small">비밀번호는 표시하지 않습니다. 방문 목록은 허브 안에서 누른 링크만 집계합니다.</p>
+        <div id="hubAdminUsers"></div>
+      </section>
+    </section>
 
     <section class="toolbar">
       <input id="searchInput" class="search" type="search" placeholder="게임 이름, repo, 설명으로 검색" />
@@ -713,6 +781,22 @@
     </footer>
   </main>
 
+
+  <dialog id="hubLoginDialog" class="hub-dialog">
+    <form method="dialog" id="hubLoginForm">
+      <h2>게임 허브 로그인</h2>
+      <p class="hub-small">처음 입력한 닉네임은 자동 가입됩니다. 기존 닉네임은 같은 비밀번호로 로그인합니다.</p>
+      <label for="hubNick">닉네임</label><input id="hubNick" maxlength="20" autocomplete="username" required>
+      <label for="hubPw">비밀번호</label><input id="hubPw" type="password" maxlength="128" minlength="4" autocomplete="current-password" required>
+      <div id="hubAdminCodeBox" hidden>
+        <label for="hubDateCode">관리자 인증 코드 (한국 날짜 8자리)</label>
+        <input id="hubDateCode" inputmode="numeric" placeholder="YYYYMMDD" maxlength="10">
+      </div>
+      <p id="hubLoginError" class="hub-small hub-off" role="alert"></p>
+      <menu><button type="button" class="hub-btn" id="hubCloseDialog">취소</button><button type="submit" class="hub-btn primary" id="hubSubmitLogin">로그인 / 가입</button></menu>
+    </form>
+  </dialog>
+
   <script>
     const searchInput = document.getElementById("searchInput");
     const tabs = Array.from(document.querySelectorAll(".tab"));
@@ -837,6 +921,202 @@
 
     searchInput.addEventListener("input", applyFilter);
     applyFilter();
+
+    // === 게임 허브 전용 로그인/통계 (각 게임 서버와는 별개) ===
+    const HUB_SERVER_STORAGE = "game_hub_api_url_v1";
+    const HUB_TOKEN_STORAGE = "game_hub_account_token_v1";
+    const hubEl = id => document.getElementById(id);
+    let hubBase = (localStorage.getItem(HUB_SERVER_STORAGE) || "").replace(/\/+$/,"");
+    let hubToken = localStorage.getItem(HUB_TOKEN_STORAGE) || "";
+    let hubIsAdmin = false;
+    function hubSetStatus(message,ok=false) {
+      hubEl("hubServerStatus").textContent=message;
+      hubEl("hubServerStatus").classList.toggle("hub-off",!ok);
+    }
+    function hubUrl(path) {return hubBase+path;}
+    async function hubApi(path,method="GET",data=null,authenticated=true) {
+      if (!hubBase) throw new Error("서버 주소를 먼저 설정하세요.");
+      const headers = {};
+      if (data !== null) headers["Content-Type"]="application/json";
+      if (authenticated && hubToken) headers["Authorization"]="Bearer "+hubToken;
+      const res=await fetch(hubUrl(path), {
+        method,headers,
+        ...(data===null?{}:{body:JSON.stringify(data)}),
+        cache:"no-store"
+      });
+      const obj=await res.json();
+      if (!res.ok) throw new Error(obj.error || "서버 오류 ("+res.status+")");
+      return obj;
+    }
+    function hubClearLogin(){
+      hubToken="";hubIsAdmin=false;localStorage.removeItem(HUB_TOKEN_STORAGE);
+      hubEl("hubAccountName").textContent="비로그인 상태";
+      hubEl("hubLoginBtn").hidden=false;hubEl("hubLogoutBtn").hidden=true;
+      hubEl("hubAdminBtn").hidden=true;hubEl("hubAdminPanel").hidden=true;
+      hubEl("hubProfile").hidden=true;
+    }
+    function hubShowList(id,items,kind){
+      const list=hubEl(id);list.replaceChildren();
+      if(!items || !items.length){
+        const li=document.createElement("li");li.textContent="방문 기록이 없습니다.";list.appendChild(li);return;
+      }
+      items.forEach(x=>{
+        const li=document.createElement("li");
+        li.textContent=(x.title || x.site_id)+" · "+(kind==="fav" ? x.total+"회" : x.clicks+"회");
+        list.appendChild(li);
+      });
+    }
+    async function hubRefreshAccount(){
+      if(!hubToken){hubClearLogin();return;}
+      try{
+        const me=await hubApi("/api/me");
+        hubIsAdmin=!!me.admin;
+        hubEl("hubAccountName").textContent=(me.nickname||"회원")+(me.admin?" · 관리자":"");
+        hubEl("hubLoginBtn").hidden=true;hubEl("hubLogoutBtn").hidden=false;
+        hubEl("hubAdminBtn").hidden=!me.admin;
+        hubEl("hubProfile").hidden=!!me.admin;
+        if(!me.admin){
+          hubShowList("hubRecentList",me.recent,"recent");
+          hubShowList("hubFavList",me.favorites,"fav");
+        }
+      }catch(err){
+        if(/로그인이 필요|인증|401|만료/.test(err.message))hubClearLogin();
+        else hubSetStatus("계정 정보를 불러오지 못했습니다: "+err.message);
+      }
+    }
+    async function hubRefreshStats(){
+      try{
+        const data=await hubApi("/api/stats","GET",null,false);
+        const body=hubEl("hubStatsBody");body.replaceChildren();
+        for(const s of data.sites){
+          const tr=document.createElement("tr");
+          for(const value of [s.title,s.total.toLocaleString("ko-KR"),s.today.toLocaleString("ko-KR")]){
+            const td=document.createElement("td");td.textContent=value;tr.appendChild(td);
+          }
+          body.appendChild(tr);
+        }
+      }catch(err){
+        const body=hubEl("hubStatsBody");
+        body.replaceChildren();
+        const tr=document.createElement("tr"),td=document.createElement("td");
+        td.colSpan=3;td.textContent="서버 연결 필요: "+err.message;
+        tr.appendChild(td);body.appendChild(tr);
+      }
+    }
+    async function hubConnect(){
+      if(!hubBase){hubSetStatus("로그인과 기록을 쓰려면 서버 주소를 먼저 입력하세요.");return;}
+      try{
+        const info=await hubApi("/api/health","GET",null,false);
+        hubSetStatus("🟢 서버 연결됨 · 한국 기준 "+info.day+" · 방문 통계 활성화",true);
+        await Promise.all([hubRefreshStats(),hubRefreshAccount()]);
+      }catch(err){
+        hubSetStatus("🔴 서버 연결 안 됨: "+err.message+" (게임 링크는 계속 열 수 있습니다)");
+      }
+    }
+    hubEl("hubServerUrl").value=hubBase;
+    hubEl("hubSaveServerBtn").addEventListener("click",()=>{
+      let value=hubEl("hubServerUrl").value.trim().replace(/\/+$/,"");
+      if(value && !/^https?:\/\/[^/]+$/i.test(value)){
+        hubSetStatus("서버 주소 전체를 입력하세요. 예: https://example.com");return;
+      }
+      if(value && location.protocol==="https:" && !value.startsWith("https://")){
+        hubSetStatus("GitHub Pages에서는 HTTPS 서버 주소가 필요합니다.");return;
+      }
+      if(value!==hubBase)hubClearLogin();
+      hubBase=value;localStorage.setItem(HUB_SERVER_STORAGE,hubBase);hubConnect();
+    });
+    const hubDialog=hubEl("hubLoginDialog");
+    hubEl("hubLoginBtn").addEventListener("click",()=>{
+      if(!hubBase){hubEl("hubServerDetails").open=true;hubSetStatus("서버 주소 저장 후 로그인하세요.");return;}
+      hubEl("hubLoginError").textContent="";
+      hubDialog.showModal();
+    });
+    hubEl("hubCloseDialog").addEventListener("click",()=>hubDialog.close());
+    hubEl("hubNick").addEventListener("input",()=>{
+      hubEl("hubAdminCodeBox").hidden=hubEl("hubNick").value.trim().toLowerCase()!=="고쓰비";
+    });
+    hubEl("hubLoginForm").addEventListener("submit",async event=>{
+      event.preventDefault();
+      const btn=hubEl("hubSubmitLogin");btn.disabled=true;
+      try{
+        const data=await hubApi("/api/login","POST",{
+          nickname:hubEl("hubNick").value.trim(),
+          password:hubEl("hubPw").value,
+          date_code:hubEl("hubDateCode").value.trim()
+        },false);
+        hubToken=data.token;localStorage.setItem(HUB_TOKEN_STORAGE,hubToken);
+        hubEl("hubPw").value="";hubEl("hubDateCode").value="";
+        hubDialog.close();await hubRefreshAccount();
+        hubSetStatus("🟢 로그인 완료 · 방문 기록이 계정에 저장됩니다.",true);
+      }catch(err){hubEl("hubLoginError").textContent=err.message;}
+      finally{btn.disabled=false;}
+    });
+    hubEl("hubLogoutBtn").addEventListener("click",async ()=>{
+      try{await hubApi("/api/logout","POST",{},true);}catch(_){}
+      hubClearLogin();hubSetStatus("로그아웃했습니다. 게임은 계속 이용할 수 있습니다.",true);
+    });
+    hubEl("hubAdminBtn").addEventListener("click",async ()=>{
+      const panel=hubEl("hubAdminPanel");
+      if(!panel.hidden){panel.hidden=true;return;}
+      panel.hidden=false;
+      const container=hubEl("hubAdminUsers");container.textContent="사용자 정보 불러오는 중...";
+      try{
+        const data=await hubApi("/api/admin/users");
+        container.replaceChildren();
+        const heading=document.createElement("p");heading.className="hub-small";
+        heading.textContent="가입한 일반 사용자 "+data.users.length+"명 · 관리자 계정은 별도";
+        container.appendChild(heading);
+        for(const user of data.users){
+          const detail=document.createElement("details");detail.className="hub-user";
+          const sum=document.createElement("summary");
+          sum.textContent=user.nickname+" · 전체 "+user.total_clicks+"회 · 최근 "+(user.last_visit||"방문 없음");
+          detail.appendChild(sum);
+          const p=document.createElement("p");p.className="hub-small";
+          p.textContent="가입: "+user.created_at+" · 전체 클릭: "+user.total_clicks;detail.appendChild(p);
+          const recent=document.createElement("p");recent.className="hub-small";
+          recent.textContent="최근: "+(user.recent.map(x=>x.title+" ("+x.last_visit+")").join(", ")||"없음");
+          detail.appendChild(recent);
+          const fav=document.createElement("p");fav.className="hub-small";
+          fav.textContent="사이트별 전체 / 오늘: "+(user.favorites.map(x=>x.title+" "+x.total+"회 / "+x.today+"회").join(", ")||"없음");
+          detail.appendChild(fav);
+          const historyBtn=document.createElement("button");
+          historyBtn.type="button";historyBtn.className="hub-btn";historyBtn.textContent="방문 전체 기록 펼치기";
+          const historyBox=document.createElement("div");historyBox.className="hub-small";
+          let offset=0,expanded=false;
+          historyBtn.addEventListener("click",async()=>{
+            if(!expanded){historyBox.replaceChildren();expanded=true;}
+            historyBtn.disabled=true;
+            try{
+              const history=await hubApi("/api/admin/visits?user_id="+encodeURIComponent(user.id)+"&offset="+offset);
+              const list=document.createElement("ol");list.start=offset+1;
+              for(const v of history.visits){
+                const li=document.createElement("li");li.textContent=v.visit_at+" · "+v.title;
+                list.appendChild(li);
+              }
+              historyBox.appendChild(list);offset+=history.visits.length;
+              historyBtn.textContent=history.next_offset===null?"모든 기록 표시 완료":"이전 방문 기록 100개 더 보기";
+              if(history.next_offset===null)historyBtn.hidden=true;
+            }catch(err){historyBox.textContent="조회 실패: "+err.message;}
+            finally{historyBtn.disabled=false;}
+          });
+          detail.appendChild(historyBtn);detail.appendChild(historyBox);
+          container.appendChild(detail);
+        }
+      }catch(err){container.textContent="관리자 조회 실패: "+err.message;}
+    });
+    // 기본 사이트 카드 클릭은 서버가 켜진 경우 비로그인 클릭까지 집계.
+    // 새 창 열기는 기존 a 태그에 맡기므로 서버 장애 시에도 이동 가능.
+    cards.forEach(card=>card.addEventListener("click",()=>{
+      const site_id=repoName(card);
+      if(!hubBase||!site_id)return;
+      const headers={"Content-Type":"application/json"};
+      if(hubToken)headers.Authorization="Bearer "+hubToken;
+      fetch(hubUrl("/api/visit"),{
+        method:"POST",headers,body:JSON.stringify({site_id}),keepalive:true
+      }).then(()=>{hubRefreshStats();if(hubToken&&!hubIsAdmin)hubRefreshAccount();}).catch(()=>{});
+    }));
+    hubConnect();
+
   </script>
 </body>
 </html>
