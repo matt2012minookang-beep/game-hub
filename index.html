@@ -571,20 +571,13 @@
         <h2>👤 게임 허브 계정 · 방문 기록</h2>
         <div class="hub-actions">
           <span id="hubAccountName" class="hub-small">비로그인 상태</span>
-          <button type="button" class="hub-btn primary" id="hubLoginBtn">로그인 / 가입</button>
+          <button type="button" class="hub-btn primary" id="hubLoginBtn">🔐 로그인</button>
           <button type="button" class="hub-btn" id="hubLogoutBtn" hidden>로그아웃</button>
           <button type="button" class="hub-btn" id="hubAdminBtn" hidden>관리자 현황</button>
         </div>
       </div>
       <p class="hub-small">로그인하지 않아도 모든 게임을 이용할 수 있어요. 로그인하면 방문한 사이트와 자주 클릭한 사이트가 이 계정에 저장됩니다. 사이트 클릭 수는 게임 허브에서 누른 횟수입니다.</p>
-      <details id="hubServerDetails">
-        <summary class="hub-small" style="cursor:pointer">⚙ 서버 연결 주소 설정</summary>
-        <div class="hub-config">
-          <input id="hubServerUrl" type="url" placeholder="https://내-파이썬-서버-공개주소 (HTTPS)" aria-label="게임 허브 서버 주소">
-          <button class="hub-btn" type="button" id="hubSaveServerBtn">주소 저장 / 연결</button>
-        </div>
-      </details>
-      <p id="hubServerStatus" class="hub-small hub-off" role="status">서버 주소를 입력하면 클릭 기록이 활성화됩니다.</p>
+      <p id="hubServerStatus" class="hub-small hub-off" role="status">로그인하지 않아도 모든 게임을 이용할 수 있어요.</p>
       <div id="hubProfile" class="hub-grid" hidden>
         <div class="hub-sub"><h3>🕘 최근 방문 사이트</h3><ol id="hubRecentList"></ol></div>
         <div class="hub-sub"><h3>💜 자주 방문한 사이트</h3><ol id="hubFavList"></ol></div>
@@ -926,7 +919,13 @@
     const HUB_SERVER_STORAGE = "game_hub_api_url_v1";
     const HUB_TOKEN_STORAGE = "game_hub_account_token_v1";
     const hubEl = id => document.getElementById(id);
-    let hubBase = (localStorage.getItem(HUB_SERVER_STORAGE) || "").replace(/\/+$/,"");
+    // 별도의 서버 주소 입력창 없이 자동 연결됩니다.
+    // F5로 실행한 파이썬 서버의 게임 허브 주소로 열면 바로 연동됩니다.
+    // GitHub Pages 공개 버전은 공개 HTTPS API 주소가 별도 필요합니다.
+    const HUB_PUBLIC_API_URL = ""; // 공개 서버를 준비했다면 이곳에 HTTPS 주소를 한 번만 입력
+    let hubBase = (location.hostname === "127.0.0.1" || location.hostname === "localhost")
+      ? location.origin
+      : (HUB_PUBLIC_API_URL || localStorage.getItem(HUB_SERVER_STORAGE) || "").replace(/\/+$/, "");
     let hubToken = localStorage.getItem(HUB_TOKEN_STORAGE) || "";
     let hubIsAdmin = false;
     function hubSetStatus(message,ok=false) {
@@ -935,7 +934,7 @@
     }
     function hubUrl(path) {return hubBase+path;}
     async function hubApi(path,method="GET",data=null,authenticated=true) {
-      if (!hubBase) throw new Error("서버 주소를 먼저 설정하세요.");
+      if (!hubBase) throw new Error("온라인 로그인 서버 공개 주소가 아직 연결되지 않았습니다. 서버 PC에서 열린 게임 허브에서는 바로 로그인할 수 있습니다.");
       const headers = {};
       if (data !== null) headers["Content-Type"]="application/json";
       if (authenticated && hubToken) headers["Authorization"]="Bearer "+hubToken;
@@ -1004,7 +1003,7 @@
       }
     }
     async function hubConnect(){
-      if(!hubBase){hubSetStatus("로그인과 기록을 쓰려면 서버 주소를 먼저 입력하세요.");return;}
+      if(!hubBase){hubSetStatus("게임은 바로 이용할 수 있어요. 온라인 로그인은 파이썬 서버에서 열린 게임 허브 또는 공개 HTTPS 서버 연결이 필요합니다.");return;}
       try{
         const info=await hubApi("/api/health","GET",null,false);
         hubSetStatus("🟢 서버 연결됨 · 한국 기준 "+info.day+" · 방문 통계 활성화",true);
@@ -1013,22 +1012,9 @@
         hubSetStatus("🔴 서버 연결 안 됨: "+err.message+" (게임 링크는 계속 열 수 있습니다)");
       }
     }
-    hubEl("hubServerUrl").value=hubBase;
-    hubEl("hubSaveServerBtn").addEventListener("click",()=>{
-      let value=hubEl("hubServerUrl").value.trim().replace(/\/+$/,"");
-      if(value && !/^https?:\/\/[^/]+$/i.test(value)){
-        hubSetStatus("서버 주소 전체를 입력하세요. 예: https://example.com");return;
-      }
-      if(value && location.protocol==="https:" && !value.startsWith("https://")){
-        hubSetStatus("GitHub Pages에서는 HTTPS 서버 주소가 필요합니다.");return;
-      }
-      if(value!==hubBase)hubClearLogin();
-      hubBase=value;localStorage.setItem(HUB_SERVER_STORAGE,hubBase);hubConnect();
-    });
     const hubDialog=hubEl("hubLoginDialog");
     hubEl("hubLoginBtn").addEventListener("click",()=>{
-      if(!hubBase){hubEl("hubServerDetails").open=true;hubSetStatus("서버 주소 저장 후 로그인하세요.");return;}
-      hubEl("hubLoginError").textContent="";
+      hubEl("hubLoginError").textContent=hubBase ? "" : "현재 웹사이트에 공개 로그인 서버가 연결되지 않았습니다. 게임 허브는 로그인 없이 사용할 수 있습니다.";
       hubDialog.showModal();
     });
     hubEl("hubCloseDialog").addEventListener("click",()=>hubDialog.close());
